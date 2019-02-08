@@ -1,0 +1,141 @@
+[
+	{ "topic": "developer",
+		"tags": [
+			{
+				"label": "css",
+				"order": 1
+			},
+			{
+				"label": "devops",
+				"order": 2
+			},
+			{
+				"label": "github",
+				"order": 3
+			},
+			{
+				"label": "golang",
+				"order": 4
+			},
+			{
+				"label": "programming",
+				"order": 5
+			},
+			{
+				"label": "javascript",
+				"order": 6
+			},
+			{
+				"label": "nodejs",
+				"order": 7
+			},
+			{
+				"label": "typescript",
+				"order": 8
+			},
+			{
+				"label": "vuejs",
+				"order": 9
+			},
+			{
+				"label": "media",
+				"order": 10
+			}
+		]
+	},
+	{
+		"topic": "humanity",
+		"tags": [
+			{
+				"label": "brain",
+				"order": 1
+			},
+			{
+				"label": "health",
+				"order": 2
+			},
+			{
+				"label": "security",
+				"order": 3
+			},
+			{
+				"label": "social",
+				"order": 4
+			},
+			{
+				"label": "politics",
+				"order": 5
+			},
+			{
+				"label": "history",
+				"order": 6
+			},
+			{
+				"label": "travel",
+				"order": 7
+			}
+		]
+	},
+	{
+		"topic": "technology",
+		"tags": [
+			{
+				"label": "awesome",
+				"order": 1
+			},
+			{
+				"label": "blockchain",
+				"order": 2
+			},
+			{
+				"label": "data",
+				"order": 3
+			},
+			{
+				"label": "embedded",
+				"order": 4
+			},
+			{
+				"label": "math",
+				"order": 5
+			},
+			{
+				"label": "machinelearn",
+				"order": 6
+			},
+			{
+				"label": "maker",
+				"order": 7
+			},
+			{
+				"label": "linux",
+				"order": 8
+			},
+			{
+				"label": "science",
+				"order": 9
+			},
+			{
+				"label": "shell",
+				"order": 10
+			}
+		]
+	},
+	{
+		"topic": "utility",
+		"tags": [
+			{
+				"label": "entrepreneur",
+				"order": 1
+			},
+			{
+				"label": "read",
+				"order": 2
+			},
+			{
+				"label": "sites",
+				"order": 3
+			}
+		]
+	}
+]

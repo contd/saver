@@ -1,0 +1,11 @@
+{
+  "name": "processor",
+  "version": "0.1.0",
+  "description": "Background service for processing long running jobs.",
+  "author": "Jason Kumpf <jason@kumpf.io> (https://kumpf.io)",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  }
+}
