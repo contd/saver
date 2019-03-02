@@ -105,6 +105,7 @@ exports.cached = (imgUrl, imgId, tags) => {
         .then(response => {
           response.data.pipe(fs.createWriteStream(filepath))
           retImg = `/cache/${filename}`
+          //TODO: Update mongo to reflect this is cached
         })
         .catch(error => {
           //logger.error(`Failed to cache preview image [${ppic} : ${filename} : ${retImg}] : ${error}`)

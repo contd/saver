@@ -12,13 +12,13 @@
           <span uk-tooltip="Date saved">{{moment created_at}}</span>
         </div>
         <div class="uk-width-auto uk-text-meta">
-          <span uk-icon="clock"></span> 
+          <span uk-icon="clock"></span>
           <span uk-tooltip="Aproximate reading time">{{readtime reading_time}}min</span>
         </div>
-      </div>            
+      </div>
     </div>
     <!-- Card Body -->
-    <div class="uk-card-body uk-background-cover uk-light uk-height-small uk-padding-remove" 
+    <div class="uk-card-body uk-background-cover uk-light uk-height-small uk-padding-remove"
       data-src="{{cached preview_picture id tags}}" uk-img>
         <div class="uk-width-auto uk-float-right">
           {{#each tags}}
@@ -27,11 +27,11 @@
         </div>
     </div>
     <!-- Card Footer -->
-    <div class="uk-card-footer uk-text-meta uk-padding-small card-bottom-trans">
+    <div class="uk-card-footer uk-text-meta uk-padding-small">
       <div class="uk-grid-small uk-flex-middle" uk-grid>
         <div class="uk-width-expand">
           <a href="{{url}}" target="_blank" uk-tooltip="Go to saved link"><span uk-icon="link"></span> {{domain_name}}</a>
-        </div>              
+        </div>
         <div class="uk-width-auto">
           <a href="/starred/{{id}}" uk-tooltip="Toggle Starred">
             {{> star is_starred=is_starred}}
@@ -43,7 +43,7 @@
             <span uk-icon="icon: trash"></span>
           </a>
         </div>
-      </div>           
+      </div>
     </div>
   </div>
 </div>

@@ -72,6 +72,29 @@ router.get('/', (_, res, next) => {
   const queryPromise = Link.find({is_archived: false, is_starred: true}).sort({created_at: -1}).exec()
   runQueryRespond(queryPromise, res, next)
 })
+// GET /api/search?tag=tag&archived=false
+router.get('/search', (req, res, next) => {
+  const params = {
+    is_archived: req.params.archived ? true : false,
+    tag: req.params.tag ? req.params.tag : 'javascript'
+  }
+  const queryPromise = Link.find(params).sort({created_at: -1}).exec()
+  queryPromise.then(docs => {
+    const results = docs.map(doc => {
+      return {
+        id: doc._id,
+        title: doc.title,
+        text: doc.marked,
+      }
+    })
+    res.json(results)
+    next()
+  })
+  .catch(err => {
+    logger.error(err)
+    next(err)
+  })
+})
 //
 // GET /api/archive
 router.get('/archive', (_, res, next) => {
@@ -92,7 +115,7 @@ router.get('/:id', (req, res, next) => {
 })
 // GET /api/tags
 router.get('/tags', (_, res, next) => {
-  Tag.find().exec()
+  Link.distinct("tags").sort().exec()
 	queryPromise.then(tags => {
 		res.json(tags)
 		next()
@@ -116,16 +139,65 @@ router.put('/:id', (req, res, next) => {
   updQueryRespond(queryPromise, res, next)
 })
 // PUT /api/starred/:id
-router.put('/starred/:id', (req, res, next) => {
+router.get('/starred/:id', (req, res) => {
   const findBy = { _id: req.params.id }
   const options = { new: false }
-  toggleOne(findBy, options, 'starred', req, res, next)
+
+  Link.findById(findBy, (err, link) => {
+    if (err) {
+      logger.error(err)
+      next(err)
+    } else {
+      const data = Object.assign({}, req.body, { is_starred: !link.is_starred })
+
+      Link.findOneAndUpdate(findBy, data, options, (err, updLink) => {
+        if (err) {
+          logger.error(err)
+        } else {
+          logger.info(`Toggled ${link._id}: ${!updLink.is_starred}`)
+        }
+        res.status(200).send(updLink)
+      })
+    }
+  })
 })
 // PUT /api/archive/:id
-router.put('/archive/:id', (req, res, next) => {
+router.get('/archived/:id', (req, res) => {
   const findBy = { _id: req.params.id }
   const options = { new: false }
-  toggleOne(findBy, options, 'archived', req, res, next)
+
+  Link.findById(findBy, (err, link) => {
+    if (err) {
+      logger.error(err)
+      next(err)
+    } else {
+      const data = Object.assign({}, req.body, { is_archived: !link.is_archived })
+
+      Link.findOneAndUpdate(findBy, data, options, (err, updLink) => {
+        if (err) {
+          logger.error(err)
+        } else {
+          logger.info(`Toggled ${link._id}: ${!updLink.is_archived}`)
+        }
+        res.status(200).send(updLink)
+      })
+    }
+  })
+})
+//
+// DELETE /remove/:id
+router.get('/remove/:id', (req, res) => {
+  const findBy = { _id: req.params.id }
+
+  Link.findByIdAndDelete(findBy, (err, doc) => {
+    if (err) {
+      logger.error(err)
+      next(err)
+    } else {
+      logger.info(`Deleted: ${doc._id}`)
+      res.status(200).send(`Deleted: ${doc._id}`)
+    }
+  })
 })
 // PUT /api/editor/:id
 router.put('/editor/:id', (req, res, next) => {
