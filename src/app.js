@@ -10,7 +10,6 @@ const helpers = require('./tools/helpers')
 const views = require('./routes/views')
 const api = require('./routes/api')
 const anno = require('./routes/anno')
-
 const options = {
   extname: '.hbs',
   defaultLayout: 'main',

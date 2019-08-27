@@ -32,3 +32,4 @@ npm-debug.log
 src/public/cache
 client/public/cache
 data/*
+.vscode/*
