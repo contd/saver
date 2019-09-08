@@ -30,6 +30,7 @@ node_modules
 npm-debug.log
 
 src/cache
+src/public/cache
 client/public/cache
 data/*
 .vscode/*

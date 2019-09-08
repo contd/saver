@@ -20,6 +20,7 @@ const makeMarkdowns = async () => {
 
   mongoose.Promise = global.Promise
   mongoose.connect(mongoConn, { useNewUrlParser: true })
+  mongoose.set('useFindAndModify', false)
 
   const db = mongoose.connection
 

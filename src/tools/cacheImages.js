@@ -26,6 +26,7 @@ const downloadImages = async () => {
 
   mongoose.Promise = global.Promise
   mongoose.connect(mongoConn, { useNewUrlParser: true })
+  mongoose.set('useFindAndModify', false)
 
   const db = mongoose.connection
 
@@ -116,11 +117,14 @@ const downloadImages = async () => {
             }
           })
         } else {
-          if (entry.cached.fullpath && entry.cached.fullpath.startsWith('/btrfs/home/develop/current-projects/nodejs/wbag/src/public')) {
-            const prevPic = updEntry.cached.fullpath.replace('/btrfs/home/develop/current-projects/nodejs/wbag/src/public','')
+          if (entry.cached.filename && entry.cached.filename !== '') {
+            const prevPic = `/cache/${entry.cached.filename}`
+
             updEntry.preview_picture = prevPic
             updEntry.cached.status = 'DONE'
-            updEntry.cached.filename = path.basename(prevPic)
+            if (updEntry.cached.fullpath) {
+              updEntry.cached.fullpath = updEntry.cached.fullpath.replace('/btrfs/home/develop/current-projects/nodejs/wbag/src/public','')
+            }
             // Push to results
             count.rename.push({
               id: entry._id,

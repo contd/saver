@@ -109,6 +109,28 @@ function updatePrevPic(imgId, prevPic) {
     })
   })
 }
+
+function getItemById(imgId) {
+  Link.findById(imgId, (err, entry) => {
+    if (err) {
+      console.log(`Error getting: ${imgId}`)
+      return
+    }
+    const cached = entry.cached
+    if (cached.fullpath) {
+      cached.fullpath = cached.fullpath.replace('/btrfs/home/develop/current-projects/nodejs/wbag/src/public','')
+    }
+
+    let getEntry = {
+      id: entry._id,
+      preview_picture: entry.preview_picture,
+      cached: cached,
+      cachedImg: cached.filename || ''
+    }
+    return getEntry
+  })
+}
+
 exports.cached = (imgUrl, imgId, tags) => {
   let ppic = JSON.stringify(imgUrl).replace(/"/g,'')
   const tag = (tags ? tags[0] : 'sites')
@@ -116,10 +138,10 @@ exports.cached = (imgUrl, imgId, tags) => {
 
   if (ppic !== 'null') {
     // Wallabag already took care of many
-    if (ppic.includes('http://wbag.kumpf.home')) {
+    if (ppic.startsWith('http://wbag.kumpf.home')) {
       ppic = ppic.replace('http://wbag.kumpf.home/assets/images', '/cache')
       return ppic
-    } else if (ppic.includes('/cache')) {
+    } else if (ppic.startsWith('/cache') || ppic.startsWith('/img')) {
       return ppic
     } else {
       const url = parse(ppic)
@@ -128,14 +150,12 @@ exports.cached = (imgUrl, imgId, tags) => {
       if (fname.length > 255) {
         fname = fname.substr(0, 100)
       }
-      fname = fname.replace(/ /g,'_')
-      fname = fname.replace(/%20/g,'_')
-
-      const filename = `${imgId}__${fname}`
-      const filepath = path.resolve(__dirname, '..', 'public', 'cache', filename)
+      const nfname = fname.replace(/[^A-Z0-9]+/ig, "-")
+      const filename = `${imgId}--${nfname}`
+      const filepath = `/cache/${filename}`
 
       if (fs.existsSync(filepath)) {
-        return `/cache/${filename}`
+        return filepath
       } else {
         axios({
           method: 'GET',
@@ -159,6 +179,10 @@ exports.cached = (imgUrl, imgId, tags) => {
       }
     }
   } else {
+    const getEntry = getItemById(imgId)
+    if (getEntry && getEntry.filename && getEntry.filename !== '') {
+      retImg = getEntry.cachedImg || getEntry.cached.filename
+    }
     return retImg
   }
 }
