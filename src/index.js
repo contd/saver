@@ -6,6 +6,8 @@ const port = process.env.SERVER_PORT || 3334
 
 // MongoDB/Mongoose
 mongoose.Promise = global.Promise
+mongoose.set('useFindAndModify', false)
+
 let mongoConn = `${process.env.MONGO_ADDRS || 'localhost:27017'}/${process.env.MONGO_DB || 'wbag'}`
 
 if (process.env.MONGO_USER && process.MONGO_USER !== "") {

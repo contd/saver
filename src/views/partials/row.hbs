@@ -1,19 +1,22 @@
 <tr>
-  <td class="uk-text-nowrap">
+  <td>
     <a href="/contents/{{_id}}" class="uk-link-heading" uk-tooltip="{{escape title}}">
       {{title}}
     </a>
-		<a href="{{url}}" target="_blank" uk-icon="icon: link" uk-tooltip="Original Link"></a>
+		<a href="{{url}}" target="_blank" uk-tooltip="{{escape url}}" class="uk-text-muted uk-margin-left">
+      <span class="uk-text-muted uk-margin-small">{{> link }}</span>
+      Original
+    </a>
   </td>
-  <td class="uk-text-nowrap">
+  <td>
     <span uk-tooltip="Date saved">{{shortMoment created_at}}</span>
   </td>
-  <td class="uk-text-nowrap">
+  <td>
     {{#each tags}}
       <span class="uk-link-muted badge badge-{{this}} uk-text-uppercase">{{this}}</span>
     {{/each}}
   </td>
-  <td class="uk-text-nowrap">
+  <td>
     <a href="/starred/{{id}}" uk-tooltip="Toggle Starred">
       {{> star is_starred=is_starred}}
     </a>
@@ -21,7 +24,7 @@
       {{> check is_archived=is_archived}}
     </a>
     <a href="/remove/{{id}}" uk-tooltip="Delete Completely">
-      <span uk-icon="icon: trash"></span>
+      {{> trash }}
     </a>
   </td>
 </tr>

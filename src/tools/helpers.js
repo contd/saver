@@ -5,6 +5,7 @@ const axios = require('axios')
 const parse = require('url-parse')
 const Entities = require('html-entities').AllHtmlEntities
 const hljs = require('highlight.js')
+const Link = require('../models/Link')
 const markdown = require('markdown-it')({
   typographer: true,
   linkify: true,
@@ -31,6 +32,11 @@ exports.shortMoment = (date) => {
 
 exports.escape = (str) => {
   return entities.encode(str).replace(/:/g, '&colon;')
+}
+
+exports.removePrefix = (str) => {
+  let newStr = str.replace(/^http\:\/\//, '')
+  return newStr.replace(/^https\:\/\//, '')
 }
 
 exports.firstTag = (tags) => {
@@ -69,6 +75,39 @@ exports.hrefreplace = (content) => {
   })
 }
 
+function updatePrevPic(imgId, prevPic) {
+  Link.findById(imgId, (err, entry) => {
+    if (err) {
+      console.log(`Error getting: ${imgId}`)
+      return
+    }
+    let updEntry = {
+      title: entry.title,
+      url: entry.url,
+      tags: entry.tags,
+      is_starred: entry.is_starred,
+      is_archived: entry.is_archived,
+      reading_time: entry.reading_time,
+      created_at: entry.created_at,
+      updated_at: entry.updated_at,
+      reading_time: entry.reading_time,
+      domain_name: entry.domain_name,
+      preview_picture: prevPic,
+      content: entry.content,
+      cached: entry.cached
+    }
+    const findBy = { _id: imgId }
+    const options = { new: false }
+
+    Link.findOneAndUpdate(findBy, updEntry, options, (err, updated) => {
+      if (err) {
+        console.log(`UPDATE ERROR [${imgId}]: ${err}`)
+      } else {
+        console.log(`UPDATE SUCCESS: ${imgId} - ${prevPic}`)
+      }
+    })
+  })
+}
 exports.cached = (imgUrl, imgId, tags) => {
   let ppic = JSON.stringify(imgUrl).replace(/"/g,'')
   const tag = (tags ? tags[0] : 'sites')
@@ -106,12 +145,14 @@ exports.cached = (imgUrl, imgId, tags) => {
           response.data.pipe(fs.createWriteStream(filepath))
           retImg = `/cache/${filename}`
           //TODO: Update mongo to reflect this is cached
+          updatePrevPic(imgId, retImg)
+          return retImg
         })
         .catch(error => {
-          //logger.error(`Failed to cache preview image [${ppic} : ${filename} : ${retImg}] : ${error}`)
           retImg = `/img/${tag}.png`
-        })
-        .finally(() => {
+          console.log(`Returning: ${retImg} - ID: ${imgId}`)
+          //TODO: Update mongo to reflect this placeholder
+          updatePrevPic(imgId, retImg)
           return retImg
         })
       }
