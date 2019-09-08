@@ -102,9 +102,10 @@ function updatePrevPic(imgId, prevPic) {
     Link.findOneAndUpdate(findBy, updEntry, options, (err, updated) => {
       if (err) {
         console.log(`UPDATE ERROR [${imgId}]: ${err}`)
-      } else {
-        console.log(`UPDATE SUCCESS: ${imgId} - ${prevPic}`)
       }
+      // else {
+      //   console.log(`UPDATE SUCCESS: ${imgId} - ${prevPic}`)
+      // }
     })
   })
 }
@@ -150,7 +151,7 @@ exports.cached = (imgUrl, imgId, tags) => {
         })
         .catch(error => {
           retImg = `/img/${tag}.png`
-          console.log(`Returning: ${retImg} - ID: ${imgId}`)
+          //console.log(`Returning: ${retImg} - ID: ${imgId}`)
           //TODO: Update mongo to reflect this placeholder
           updatePrevPic(imgId, retImg)
           return retImg

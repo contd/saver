@@ -7,6 +7,7 @@ const Logger = require('logplease')
 const logger = Logger.create('utils')
 const TurndownService = require('turndown')
 const turndownPluginGfm = require('turndown-plugin-gfm')
+const Mercury = require('@postlight/mercury-parser')
 
 const options = {
   headingStyle: 'atx',
@@ -207,59 +208,46 @@ router.get('/save', (req, res) => {
   // First run url through mercury
   const srcUrl = req.query.url
   const defTag = req.query.tag || 'javascript'
-  const mercUrl = `https://mercury.postlight.com/parser?url=${srcUrl}`
-	const refer = req.get('Referrer') || '/'
+  const refer = req.get('Referrer') || '/'
 
-  rp({
-    uri: mercUrl,
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': 'hkvzdwNZp1OqdaOF9LRzbtDMKyqZFMWGcGZDXttc'
-    },
-    json: true
-  })
-    .then(async response => {
-      let contentMD = ''
-      // Make markdown version
-      try {
-        contentMD = await turndownService.turndown(response.content)
-      } catch(err) {
-        logger.error(`Error Creating Markdown: ${err}`)
+  Mercury.parse(srcUrl).then(async result => {
+    let contentMD = ''
+    // Make markdown version
+    try {
+      contentMD = await turndownService.turndown(result.content)
+    } catch(err) {
+      logger.error(`Error Creating Markdown: ${err}`)
+    }
+    // Now we can save it with a little modification
+    const newEntry = {
+      title: result.title,
+      url: result.url,
+      reading_time: Math.round(result.word_count/130),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      domain_name: result.domain,
+      preview_picture: result.lead_image_url || null,
+      content: result.content,
+      marked: contentMD,
+      tags: [defTag],
+      is_starred: true,
+      is_archived: false,
+      cached: {
+        status: 'NONE',
+        filename: null,
+        fullpath: null
       }
-      // Now we can save it with a little modification
-      const newEntry = {
-        title: response.title,
-        url: response.url,
-        reading_time: Math.round(response.word_count/130),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        domain_name: response.domain,
-        preview_picture: response.lead_image_url || null,
-        content: response.content,
-        marked: contentMD,
-        tags: [defTag],
-        is_starred: true,
-        is_archived: false,
-        cached: {
-          status: 'NONE',
-          filename: null,
-          fullpath: null
-        }
+    }
+    // Adde to database
+    await Link.create(newEntry, (err, newLink) => {
+      if (err) {
+        logger.error(err)
+      } else {
+        logger.info(`Created new link: ${newLink.url} ${newLink.id}`)
       }
-      // Adde to database
-      await Link.create(newEntry, (err, newLink) => {
-        if (err) {
-          logger.error(err)
-        } else {
-          logger.info(`Created new link: ${newLink.url} ${newLink.id}`)
-        }
-        res.redirect(refer)
-      })
-    })
-    .catch(error => {
-      logger.error(error)
       res.redirect(refer)
     })
+  })
 })
 
 module.exports = router

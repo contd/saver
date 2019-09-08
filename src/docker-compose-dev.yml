@@ -5,9 +5,9 @@ networks:
     external: true
 
 services:
-  wbag:
+  saveddev:
     build: .
-    container_name: wbag
+    container_name: saveddev
     ports:
       - "3334:3334"
     environment:
@@ -15,20 +15,20 @@ services:
       - DEBUG=true
       - NODE_ENV=development
       - MONGO_DB=wbag
-      - MONGO_ADDRS=mongodev:27017
+      - MONGO_ADDRS=mongodb:27017
     labels:
       - traefik.enable=false
     networks:
       - web
 
-  mongodev:
-    image: mongodb:latest
-    container_name: mongodev
-    command: mongod --smallfiles
-    volumes:
-      - ../mongo:/data/db
-    labels:
-      - traefik.enable=false
-    networks:
-      - web
+#  mongodev:
+#    image: mongodb:latest
+#    container_name: mongodev
+#    command: mongod --smallfiles
+#    volumes:
+#      - ../mongo:/data/db
+#    labels:
+#      - traefik.enable=false
+#    networks:
+#      - web
 
