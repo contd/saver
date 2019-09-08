@@ -5,19 +5,24 @@ networks:
     external: true
 
 services:
-  wbag:
+  saved:
     build: .
-    container_name: wbag
+    container_name: saved
     restart: always
-    ports:
-      - "3333:3333"
     environment:
       - SERVER_PORT=3333
       - DEBUG=false
       - NODE_ENV=production
       - MONGO_DB=wbag
       - MONGO_ADDRS=mongodb:27017
+    volumes:
+      - ./cache:/app/public/cache
     labels:
-      - traefik.enable=false
+      - "traefik.backend=saved"
+      - "traefik.domain=kumpf.io"
+      - "traefik.frontend.rule=Host:saved.kumpf.io"
+      - "traefik.frontend.redirect.entryPoint=https"
+      - "traefik.docker.network=web"
+      - "traefik.port=3333"
     networks:
       - web
