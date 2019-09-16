@@ -13,7 +13,7 @@ COPY ./tools tools
 COPY ./routes routes
 COPY ./views views
 COPY ./package.json .
-COPY ./yarn.lock .
+COPY ./package-lock.json .
 COPY ./app.js .
 COPY ./index.js .
 

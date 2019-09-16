@@ -139,10 +139,11 @@ exports.cached = (imgUrl, imgId, tags) => {
   if (ppic !== 'null') {
     // Wallabag already took care of many
     if (ppic.startsWith('http://wbag.kumpf.home')) {
-      ppic = ppic.replace('http://wbag.kumpf.home/assets/images', '/cache')
-      return ppic
+      return ppic.replace('http://wbag.kumpf.home/assets/images', '/cache')
     } else if (ppic.startsWith('/cache') || ppic.startsWith('/img')) {
-      return ppic
+			return ppic
+    } else if (ppic.startsWith('http')) {
+			return ppic
     } else {
       const url = parse(ppic)
       let fname = path.basename(url.pathname)
@@ -150,8 +151,9 @@ exports.cached = (imgUrl, imgId, tags) => {
       if (fname.length > 255) {
         fname = fname.substr(0, 100)
       }
-      const nfname = fname.replace(/[^A-Z0-9]+/ig, "-")
-      const filename = `${imgId}--${nfname}`
+			const ffname = fname.replace(/\%20/g, "_")
+			const nfname = ffname.replace(/[^A-Z0-9_.]+/ig, "-")
+      const filename = `${imgId}__${nfname}`
       const filepath = `/cache/${filename}`
 
       if (fs.existsSync(filepath)) {
